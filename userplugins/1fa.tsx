@@ -14,7 +14,7 @@ export default definePlugin({
             find: "APPLICATION_SUBSCRIPTION_EXPIRATION:",
             replacement: [{
                 match: /GUILD_MFA_WARNING:return/,
-                replace: `GUILD_MFA_WARNING:return;return`
+                replace: "GUILD_MFA_WARNING:return;return"
             }]
         }
     ]
