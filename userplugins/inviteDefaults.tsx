@@ -1,11 +1,10 @@
 /*
  * Vencord, a Discord client mod
- * Copyright (c) 2024 Vendicated and contributors
+ * Copyright (c) 2025 Vendicated and contributors
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
 import { definePluginSettings } from "@api/Settings";
-import { Devs } from "@utils/constants";
 import definePlugin, { OptionType } from "@utils/types";
 
 const settings = definePluginSettings({
@@ -45,7 +44,7 @@ const settings = definePluginSettings({
 export default definePlugin({
     name: "InviteDefaults",
     description: "Allows you to edit the default values when creating server invites.",
-    authors: [{ name: 'Death', id: 1003477997728313405n }],
+    authors: [{ name: "Death", id: 1003477997728313405n }],
     settings,
     patches: [
         {
