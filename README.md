@@ -24,9 +24,7 @@ curl -L https://github.com/VillainsRule/VencordPlugins/archive/refs/heads/main.z
 
 windows:
 
-```sh
-$zip = "v.zip"; $folder = "VencordPlugins-main\userplugins"; iwr "https://github.com/VillainsRule/VencordPlugins/archive/refs/heads/main.zip" -OutFile $zip; Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::ExtractToDirectory($zip, ".\_tmp"); Copy-Item ".\_tmp\$folder\*" . -Recurse -Force; Remove-Item $zip, "_tmp" -Recurse -Force
-```
+idk ask chatgpt
 
 enjoy!
 
