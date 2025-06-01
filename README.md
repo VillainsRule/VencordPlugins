@@ -10,6 +10,7 @@
 - [everytwo](./userplugins/everytwo.tsx) - pings everyone in chunked messages (will flag account)
 - [gatewayLogger](./userplugins/gatewayLogger.tsx) - logs all gateway messages to the console
 - [inviteDefaults](./userplugins/inviteDefaults.tsx) - edit the default values when creating server invites.
+- [selfForward](./userplugins/selfForward.tsx) - shows the current channel in the message forward popup
 - [tokenCommand](./userplugins/tokenCommand.tsx) - run command, get token. ez.
 
 <br>
