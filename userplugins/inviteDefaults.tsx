@@ -48,10 +48,10 @@ export default definePlugin({
     settings,
     patches: [
         {
-            find: "Messages.INVITE_STREAM_FOOTER_LINK_HEADER",
+            find: ".GUILD_CREATE_INVITE_SUGGESTION,defaultMaxAge",
             replacement: [
                 {
-                    match: /maxAge:null!==\(\i=null!=\i\?\i:\i\)&&void 0!==\i\?\i:\i.value/,
+                    match: /maxAge:null!=\(\i=null!=\i\?\i:\i\)\?\i:\i.value/,
                     replace: "maxAge:$self.settings.store.inviteDuration"
                 },
                 {
