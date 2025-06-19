@@ -13,32 +13,7 @@ import { GuildMember } from "discord-types/general";
 export default definePlugin({
     name: "everytwo",
     authors: [{ name: "Death", id: 1003477997728313405n }],
-    description: "mentions everyone but a lot. your account will be flagged as spam. i'm not responsible for stupidity.",
-    patches: [
-        {
-            find: ".LAUNCHABLE_APPLICATIONS;",
-            replacement: [
-                {
-                    match: /&(\i)\(\)\((\i),\i\(\)\.test\)&&(\i)\.push\(\i\(\)\)/g,
-                    replace: "$&,$1()($2,/everytwo/.test)&&$3.push({text:'@everytwo',description:'mention everyone the funny way?'})"
-                },
-            ],
-        },
-        {
-            find: "MENTION_HERE:",
-            replacement: {
-                match: /(LAUNCHABLE_APPLICATIONS)/,
-                replace: "MENTION_HERE: ()=>({test: 'everytwo',text: '@everytwo',description: 'mention everyone the funny way?'}),$1"
-            }
-        },
-        {
-            find: "inQuote:",
-            replacement: {
-                match: /\|Clyde/,
-                replace: "$&|everytwo"
-            }
-        }
-    ],
+    description: "adds an /everytwo command that mentions everyone in a lot of messages. your account WILL be flagged as a spammer. if a server has >25 members, DO NOT ATTEMPT THIS.",
 
     commands: [
         {
@@ -54,9 +29,7 @@ export default definePlugin({
                 },
             ],
             execute: (args, ctx) => {
-                if (!ctx.guild) {
-                    return sendBotMessage(ctx.channel.id, { content: "Make sure that you are in a server." });
-                }
+                if (!ctx.guild) return sendBotMessage(ctx.channel.id, { content: "Make sure that you are in a server." });
 
                 const guildId = SelectedGuildStore.getGuildId();
                 if (guildId === null) {
