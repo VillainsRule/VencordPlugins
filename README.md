@@ -5,17 +5,14 @@
 
 <br>
 
-- [1fa](./userplugins/1fa.tsx) - hide the 2fa moderation warning because annoying
-- [dontLimitMe](./userplugins/dontLimitMe.tsx) - removes the client-side limit on message sending - spam away!
-- [everytwo](./userplugins/everytwo.tsx) - pings everyone in chunked messages (will flag account)
-- [gatewayLogger](./userplugins/gatewayLogger.tsx) - logs all gateway messages to the console
-- [inviteDefaults](./userplugins/inviteDefaults.tsx) - edit the default values when creating server invites.
-- [selfForward](./userplugins/selfForward.tsx) - shows the current channel in the message forward popup
-- [tokenCommand](./userplugins/tokenCommand.tsx) - run command, get token. ez.
+there are 3 cool things in here:
+1. [plugins from PRs](./from-pr/) - names are [pr number]-[plugin name].ts(x?)
+2. [removed plugins](./removed/) - as-is when removed from vencord
+3. [things i made](./userplugins/) - yeahhh fun stuff idk what to put here
 
 <br>
 
-featured plugins:
+also some cool plugins:
 
 - [copyStatusUrls](https://github.com/sadan4/vc-copyStatusUrls) by sadan
 - [inRole](https://git.nin0.dev/userplugins/in-role) by nin0
@@ -40,3 +37,5 @@ enjoy!
 
 <br>
 <h5 align="center">made with 💖 by VillainsRule</h5>
+
+<h5 align="center">if your plugin is featured in "from-pr" and you don't want it to be here, either (a) open an issue or (b) email "legal@villainsrule.xyz" ok thanks bye</h5>
