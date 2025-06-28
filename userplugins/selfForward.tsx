@@ -12,6 +12,7 @@ export default definePlugin({
     authors: [{ id: 1003477997728313405n, name: "Death" }],
     patches: [
         {
+            // note to self: "test patch" only works once you open the forward message modal
             find: ".getChannelHistory(),",
             replacement: [{
                 match: /\i.id\]/,
