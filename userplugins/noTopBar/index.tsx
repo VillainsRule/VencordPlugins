@@ -16,7 +16,6 @@ export default definePlugin({
     name: "NoTopBar",
     description: "removes the top bar and the inbox down",
     authors: [{ name: "Death", id: 1003477997728313405n }],
-    dependencies: ["VencordToolbox"],
     patches: [
         {
             find: "toolbar:function",
