@@ -1,0 +1,266 @@
+/*
+ * Vencord, a Discord client mod
+ * Copyright (c) 2024 Vendicated and contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+import "./style.css";
+
+import { showNotification } from "@api/Notifications";
+import { definePluginSettings } from "@api/Settings";
+import { Devs } from "@utils/constants";
+import { getTheme, Theme } from "@utils/discord";
+import definePlugin, { OptionType } from "@utils/types";
+import { findByProps } from "@webpack";
+import { ChannelStore, FluxDispatcher, GuildChannelStore, RestAPI, UserStore } from "@webpack/common";
+import { Button } from "@components/Button";
+
+let questIdCheck = 0;
+
+async function completeQuest(quest: DiscordQuest) {
+    if (!quest.userStatus?.enrolledAt) return showNotification({
+        title: "Quest Completer",
+        body: "You are not enrolled in this quest. You may need to complete the captcha or start watching the video."
+    });
+
+    const ApplicationStreamingStore = findByProps("getStreamerActiveStreamMetadata");
+    const RunningGameStore = findByProps("getRunningGames");
+
+    const pid = Math.floor(Math.random() * 30000) + 1000;
+    const theme = getTheme() === Theme.Light
+        ? "light"
+        : "dark";
+
+    const applicationId = quest.config.application.id;
+    const applicationName = quest.config.application.name;
+    const taskName = ["WATCH_VIDEO", "PLAY_ON_DESKTOP", "STREAM_ON_DESKTOP", "PLAY_ACTIVITY", "WATCH_VIDEO_ON_MOBILE", "ACHIEVEMENT_IN_ACTIVITY"].find(x => quest.config.taskConfigV2.tasks[x] != null);
+    const icon = `https://cdn.discordapp.com/quests/${quest.id}/${theme}/${quest.config.assets.gameTile}`;
+    // @ts-ignore
+    const secondsNeeded = quest.config.taskConfigV2.tasks[taskName].target;
+    // @ts-ignore
+    let secondsDone = quest.userStatus?.progress?.[taskName]?.value ?? 0;
+    if (taskName === "WATCH_VIDEO" || taskName === "WATCH_VIDEO_ON_MOBILE") {
+        const maxFuture = 10, speed = 7, interval = 1;
+        const enrolledAt = new Date(quest.userStatus.enrolledAt).getTime();
+        const fn = async () => {
+            while (true) {
+                const maxAllowed = Math.floor((Date.now() - enrolledAt) / 1000) + maxFuture;
+                const diff = maxAllowed - secondsDone;
+                const timestamp = secondsDone + speed;
+                if (diff >= speed) {
+                    await RestAPI.post({ url: `/quests/${quest.id}/video-progress`, body: { timestamp: Math.min(secondsNeeded, timestamp + Math.random()) } });
+                    secondsDone = Math.min(secondsNeeded, timestamp);
+                }
+
+                if (timestamp >= secondsNeeded) break;
+
+                await new Promise(resolve => setTimeout(resolve, interval * 1000));
+            }
+
+            await RestAPI.post({ url: `/quests/${quest.id}/video-progress`, body: { timestamp: secondsNeeded } });
+
+            if (!settings.store.disableNotifications) showNotification({
+                title: `${applicationName} - Quest Completer`,
+                body: "Quest Completed!",
+                icon: icon,
+            });
+        };
+        fn();
+    } else if (taskName === "PLAY_ON_DESKTOP") {
+        RestAPI.get({ url: `/applications/public?application_ids=${applicationId}` }).then(res => {
+            const appData = res.body[0];
+            const exeName = appData.executables.find(x => x.os === "win32").name.replace(">", "");
+            const fakeGame = {
+                cmdLine: `C:\\Program Files\\${appData.name}\\${exeName}`,
+                exeName,
+                exePath: `c:/program files/${appData.name.toLowerCase()}/${exeName}`,
+                hidden: false,
+                isLauncher: false,
+                id: applicationId,
+                name: appData.name,
+                pid: pid,
+                pidPath: [pid],
+                processName: appData.name,
+                start: Date.now(),
+            };
+            const realGames = RunningGameStore.getRunningGames();
+            const fakeGames = [fakeGame];
+            const realGetRunningGames = RunningGameStore.getRunningGames;
+            const realGetGameForPID = RunningGameStore.getGameForPID;
+            RunningGameStore.getRunningGames = () => fakeGames;
+            RunningGameStore.getGameForPID = pid => fakeGames.find(x => x.pid === pid);
+            FluxDispatcher.dispatch({
+                type: "RUNNING_GAMES_CHANGE", removed: realGames, added: [fakeGame], games: fakeGames
+            });
+
+            const fn = data => {
+                const progress = quest.config.configVersion === 1 ? data.userStatus.streamProgressSeconds : Math.floor(data.userStatus.progress.PLAY_ON_DESKTOP.value);
+
+                if (progress >= secondsNeeded) {
+                    if (!settings.store.disableNotifications) showNotification({
+                        title: `${applicationName} - Quest Completer`,
+                        body: "Quest Completed.",
+                        icon: icon,
+                    });
+
+                    RunningGameStore.getRunningGames = realGetRunningGames;
+                    RunningGameStore.getGameForPID = realGetGameForPID;
+                    FluxDispatcher.dispatch({ type: "RUNNING_GAMES_CHANGE", removed: [fakeGame], added: [], games: [] });
+                    FluxDispatcher.unsubscribe("QUESTS_SEND_HEARTBEAT_SUCCESS", fn);
+                }
+            };
+            FluxDispatcher.subscribe("QUESTS_SEND_HEARTBEAT_SUCCESS", fn);
+        });
+    } else if (taskName === "STREAM_ON_DESKTOP") {
+        const stream = ApplicationStreamingStore.getAnyStreamForUser(UserStore.getCurrentUser()?.id);
+        if (!stream && !settings.store.disableNotifications) showNotification({
+            title: "You're not streaming - Quest Completer",
+            body: `${applicationName} requires you to be streaming.\nPlease stream any window in vc. Make sure 1 other user is watching.`,
+            icon: icon,
+        });
+
+        const realFunc = ApplicationStreamingStore.getStreamerActiveStreamMetadata;
+        ApplicationStreamingStore.getStreamerActiveStreamMetadata = () => ({
+            id: applicationId,
+            pid,
+            sourceName: null
+        });
+
+        const fn = data => {
+            const progress = quest.config.configVersion === 1 ? data.userStatus.streamProgressSeconds : Math.floor(data.userStatus.progress.STREAM_ON_DESKTOP.value);
+            if (progress >= secondsNeeded) {
+                if (!settings.store.disableNotifications) showNotification({
+                    title: `${applicationName} - Quest Completer`,
+                    body: "Quest Completed!",
+                    icon: icon,
+                });
+
+                ApplicationStreamingStore.getStreamerActiveStreamMetadata = realFunc;
+                FluxDispatcher.unsubscribe("QUESTS_SEND_HEARTBEAT_SUCCESS", fn);
+            }
+        };
+        FluxDispatcher.subscribe("QUESTS_SEND_HEARTBEAT_SUCCESS", fn);
+    } else if (taskName === "PLAY_ACTIVITY") {
+        const channelId = ChannelStore.getSortedPrivateChannels()[0]?.id ?? Object.values(GuildChannelStore.getAllGuilds() as any[]).find(x => x != null && x.VOCAL.length > 0).VOCAL[0].channel.id;
+        const streamKey = `call:${channelId}:1`;
+
+        const fn = async () => {
+            while (true) {
+                const res = await RestAPI.post({ url: `/quests/${quest.id}/heartbeat`, body: { stream_key: streamKey, terminal: false } });
+                const progress = res.body.progress.PLAY_ACTIVITY.value;
+
+                await new Promise(resolve => setTimeout(resolve, 20 * 1000));
+
+                if (progress >= secondsNeeded) {
+                    await RestAPI.post({ url: `/quests/${quest.id}/heartbeat`, body: { stream_key: streamKey, terminal: true } });
+                    break;
+                }
+            }
+
+            if (!settings.store.disableNotifications) showNotification({
+                title: `${applicationName} - Quest Completer`,
+                body: "Quest Completed!",
+                icon: icon,
+            });
+        };
+
+        fn();
+    }
+    return;
+}
+
+type TaskNames = 'PLAY_ON_DESKTOP' |
+    'STREAM_ON_DESKTOP' |
+    'WATCH_VIDEO' |
+    'WATCH_VIDEO_ON_MOBILE' |
+    'PLAY_ACTIVITY' |
+    'ACHIEVEMENT_IN_ACTIVITY';
+
+interface Task {
+    target: number;
+    type: TaskNames;
+    applications?: { id: string; }[];
+}
+
+// very incomplete
+interface DiscordQuest {
+    id: string;
+    config: {
+        application: {
+            id: string;
+            name: string;
+        };
+        assets: {
+            gameTile: string;
+        };
+        configVersion: 1 | 2;
+        expiresAt: string;
+        taskConfigV2: {
+            tasks: Record<TaskNames, Task>;
+        };
+    };
+    userStatus: {
+        enrolledAt: string;
+        completedAt: string | null;
+        progress: Record<TaskNames, { value: number; }>;
+    } | null;
+}
+
+const settings = definePluginSettings({
+    useNavBar: {
+        description: "Move quest button down to the server nav bar",
+        type: OptionType.BOOLEAN,
+        default: false,
+    },
+    disableNotifications: {
+        description: "Disable notifications when no quests are available or when a quest is completed",
+        type: OptionType.BOOLEAN,
+        default: false,
+    },
+});
+
+export default definePlugin({
+    name: "QuestCompleter",
+    description: "A plugin to complete quests without having the game installed.",
+    authors: [Devs.amia, { id: 1003477997728313405n, name: "Death" }],
+    settings,
+    patches: [
+        {
+            find: ".platformSelectorPrimary,",
+            replacement: {
+                match: /(?<=questId:(\i\.id).*?"secondary",)disabled:!0/,
+                replace: "onClick:()=>$self.mobileQuestPatch($1)"
+            },
+        },
+        {
+            find: '.textOverflowBlur',
+            replacement: {
+                match: /\.textOverflowBlur.{0,250},sourceQuestContent:\i\}\)/,
+                replace: "$&,$self.addChildren(arguments[0])"
+            }
+        }
+    ],
+    addChildren({ quest }: { quest: DiscordQuest; }) {
+        if (
+            quest.userStatus &&
+            quest.userStatus.enrolledAt &&
+            !quest.userStatus.completedAt &&
+            new Date(quest.config.expiresAt).getTime() > Date.now() &&
+            !(!IS_DISCORD_DESKTOP && (quest.config.taskConfigV2.tasks.STREAM_ON_DESKTOP || quest.config.taskConfigV2.tasks.PLAY_ON_DESKTOP))
+        ) {
+            return <div className="vc-quest-button-container">
+                <Button className="vc-quest-button" onClick={() => completeQuest(quest)}>complelte quest wowizers im so good code</Button>
+            </div>;
+        }
+    },
+    mobileQuestPatch(questId: number) {
+        if (questId === questIdCheck) return;
+        questIdCheck = questId;
+        Vencord.Webpack.Common.RestAPI.post({
+            url: `/quests/${questId}/enroll`,
+            body: {
+                location: 11
+            }
+        });
+    }
+});
