@@ -36,5 +36,3 @@ enjoy!
 
 <br>
 <h5 align="center">made with 💖 by VillainsRule</h5>
-
-<h5 align="center">if your plugin is featured in "from-pr" and you don't want it to be here, either (a) open an issue or (b) email "legal@villainsrule.xyz" ok thanks bye</h5>
