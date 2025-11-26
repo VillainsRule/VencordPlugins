@@ -18,7 +18,7 @@ also some cool plugins:
 - [inRole](https://git.nin0.dev/userplugins/in-role) by nin0
 - [newPluginsManager](https://github.com/Sqaaakoi/vc-newPluginsManager) by sqaaakoi
 - [venfetch](https://git.nin0.dev/userplugins/venfetch) by nin0
-- [whosWatching](https://github.com/fres621/vencord-whos-watching) by fres
+- [untitled](https://github.com/Kyuuhachi/VencordPlugins/tree/main/Untitled) by kyuuhachi
 
 to add the plugins, first follow the steps [here](https://docs.vencord.dev/installing/custom-plugins/) up to "add your plugins" from there, run this command **in the userplugins directory**:
 
