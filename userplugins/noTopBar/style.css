@@ -1,7 +1,0 @@
-div[data-fullscreen]>div[class^="bar_"] {
-    display: none
-}
-
-div[data-fullscreen]:has(div[class^="bar_"]) {
-    grid-template-rows: [top] 0 [titleBarEnd] min-content [noticeEnd] 1fr [end];
-}
