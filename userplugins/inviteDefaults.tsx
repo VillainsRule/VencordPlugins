@@ -44,23 +44,23 @@ const settings = definePluginSettings({
 export default definePlugin({
     name: "InviteDefaults",
     description: "Allows you to edit the default values when creating server invites.",
-    authors: [{ name: "Death", id: 1003477997728313405n }],
+    authors: [{ id: 1003477997728313405n, name: "Death" }],
     settings,
     patches: [
         {
             find: ".GUILD_CREATE_INVITE_SUGGESTION,defaultMaxAge",
             replacement: [
                 {
-                    match: /maxAge:null!=\(\i=null!=\i\?\i:\i\)\?\i:\i.value/,
-                    replace: "maxAge:$self.settings.store.inviteDuration"
+                    match: /(?<=maxAge:)null!=\(\i=null!=\i\?\i:\i\)\?\i:\i.\i/,
+                    replace: "$self.settings.store.inviteDuration"
                 },
                 {
-                    match: /maxUses:null!=\i&&0!==\i\?\i:\i.value/,
-                    replace: "maxUses:$self.settings.store.maxUses"
+                    match: /(?<=maxUses:)null!=\i&&0!==\i\?\i:\i.value/,
+                    replace: "$self.settings.store.maxUses"
                 },
                 {
-                    match: /temporary:null!=\i&&\i/,
-                    replace: "temporary:$self.settings.store.temporaryMembership"
+                    match: /(?<=temporary:)null!=\i&&\i/,
+                    replace: "$self.settings.store.temporaryMembership"
                 }
             ]
         }
