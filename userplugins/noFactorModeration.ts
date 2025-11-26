@@ -7,7 +7,7 @@
 import definePlugin from "@utils/types";
 
 export default definePlugin({
-    name: "1FA",
+    name: "NoFactorModeration",
     description: "hide the 2fa moderation warning because annoying",
     authors: [{ id: 1003477997728313405n, name: "Death" }],
     patches: [
