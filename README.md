@@ -17,7 +17,6 @@ also some cool plugins:
 - [copyStatusUrls](https://github.com/sadan4/vc-copyStatusUrls) by sadan
 - [inRole](https://git.nin0.dev/userplugins/in-role) by nin0
 - [newPluginsManager](https://github.com/Sqaaakoi/vc-newPluginsManager) by sqaaakoi
-- [spotifyLyrics](https://github.com/Masterjoona/vc-spotifylyrics) by joona
 - [venfetch](https://git.nin0.dev/userplugins/venfetch) by nin0
 - [whosWatching](https://github.com/fres621/vencord-whos-watching) by fres
 
