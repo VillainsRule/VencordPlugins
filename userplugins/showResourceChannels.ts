@@ -12,11 +12,13 @@ export default definePlugin({
     authors: [{ id: 1003477997728313405n, name: "Death" }],
     patches: [
         {
-            find: '"should_show_in_recents"',
-            replacement: [{
-                match: /\i\.hideResourceChannels&&/,
-                replace: "false&&"
-            }]
+            find: ".GUILD_DIRECTORY:null",
+            replacement: [
+                {
+                    match: /\i\.hideResourceChannels&&/,
+                    replace: "false&&"
+                }
+            ]
         }
     ]
 });
