@@ -1,8 +1,20 @@
 /*
- * Vencord, a Discord client mod
- * Copyright (c) 2024 Vendicated and contributors
- * SPDX-License-Identifier: GPL-3.0-or-later
- */
+ * Vencord, a modification for Discord's desktop app
+ * Copyright (c) 2023 Vendicated and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
 
 import "./style.css";
 
@@ -141,7 +153,7 @@ async function completeQuest(quest: DiscordQuest) {
         };
         FluxDispatcher.subscribe("QUESTS_SEND_HEARTBEAT_SUCCESS", fn);
     } else if (taskName === "PLAY_ACTIVITY") {
-        const channelId = ChannelStore.getSortedPrivateChannels()[0]?.id ?? Object.values(GuildChannelStore.getAllGuilds() as any[]).find(x => x != null && x.VOCAL.length > 0).VOCAL[0].channel.id;
+        const channelId = ChannelStore.getSortedPrivateChannels()[0]?.id ?? (Object.values(GuildChannelStore.getAllGuilds()) as any[]).find(x => x != null && x.VOCAL.length > 0).VOCAL[0].channel.id;
         const streamKey = `call:${channelId}:1`;
 
         const fn = async () => {
@@ -222,7 +234,7 @@ const settings = definePluginSettings({
 export default definePlugin({
     name: "QuestCompleter",
     description: "A plugin to complete quests without having the game installed.",
-    authors: [Devs.amia, { id: 1003477997728313405n, name: "Death" }],
+    authors: [Devs.amia, { id: 1003477997728313405n, name: "VillainsRule" }],
     settings,
     patches: [
         {
@@ -233,10 +245,10 @@ export default definePlugin({
             },
         },
         {
-            find: '.textOverflowBlur',
+            find: 'size:76,',
             replacement: {
-                match: /\.textOverflowBlur.{0,250},sourceQuestContent:\i\}\)/,
-                replace: "$&,$self.addChildren(arguments[0])"
+                match: /onReceiveErrorHints:(\i),sourceQuestContent:(\i)\}\)\]/,
+                replace: "onReceiveErrorHints:$1,sourceQuestContent:$1}),$self.addChildren(arguments[0])]"
             }
         }
     ],
