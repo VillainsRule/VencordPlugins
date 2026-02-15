@@ -34,6 +34,7 @@ baseParams.append('art[url]', 'f');
 baseParams.append('extend', 'artistUrl');
 baseParams.append('fields[albums]', 'artistName,artistUrl,artwork,name,url');
 baseParams.append('fields[artists]', 'url,name,artwork');
+baseParams.append('format[resources]', 'map');
 baseParams.append('include[albums]', 'artists');
 baseParams.append('include[songs]', 'artists');
 baseParams.append('l', new Intl.DateTimeFormat().resolvedOptions().locale);
@@ -71,7 +72,7 @@ async function fetchRemoteData({ id, name, artist, album }: { id: string, name: 
 
     try {
         const params = new URLSearchParams(baseParams);
-        params.set("term", `${name} ${artist} ${album}`);
+        params.set("term", `${name} by ${artist} on ${album}`);
 
         const songReq = await fetch("https://amp-api-edge.music.apple.com/v1/catalog/us/search?" + params.toString(), {
             headers: {
@@ -87,13 +88,17 @@ async function fetchRemoteData({ id, name, artist, album }: { id: string, name: 
         const songData = songRes.results.song.data[0];
         if (!songData) return null;
 
+        const extendedData = songRes.resources.songs[songData.id];
+        const primaryArtistId = extendedData.relationships.artists.data[0].id;
+        const extendedArtistData = songRes.resources.artists[primaryArtistId];
+
         cachedRemoteData = {
             id,
             data: {
                 appleMusicLink: `https://music.apple.com${songData.href}`,
                 songLink: `https://song.link/i/${songData.id}`,
-                albumArtwork: highResify(songData.attributes.artwork.url),
-                artistArtwork: highResify(songData.relationships.artists.data[0].attributes.artwork.url)
+                albumArtwork: highResify(extendedData.attributes.artwork.url),
+                artistArtwork: highResify(extendedArtistData.attributes.artwork.url)
             }
         };
 
