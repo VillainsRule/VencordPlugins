@@ -81,7 +81,7 @@ async function completeQuest(quest: DiscordQuest) {
     } else if (taskName === "PLAY_ON_DESKTOP") {
         RestAPI.get({ url: `/applications/public?application_ids=${applicationId}` }).then(res => {
             const appData = res.body[0];
-            const exeName = appData.executables.find(x => x.os === "win32").name.replace(">", "");
+            const exeName = appData.executables?.find(x => x.os === "win32")?.name?.replace(">", "") ?? appData.name.replace(/[\/\\:*?"<>|]/g, "");
             const fakeGame = {
                 cmdLine: `C:\\Program Files\\${appData.name}\\${exeName}`,
                 exeName,
