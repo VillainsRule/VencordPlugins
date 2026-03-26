@@ -16,8 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import "./style.css";
-
 import { showNotification } from "@api/Notifications";
 import { definePluginSettings } from "@api/Settings";
 import { Devs } from "@utils/constants";
@@ -238,41 +236,28 @@ export default definePlugin({
     settings,
     patches: [
         {
-            find: ".platformSelectorPrimary,",
+            find: 'skipEnrollmentCheck:!0',
             replacement: {
-                match: /(?<=questId:(\i\.id).*?"secondary",)disabled:!0/,
-                replace: "onClick:()=>$self.mobileQuestPatch($1)"
-            },
-        },
-        {
-            find: 'size:76,',
-            replacement: {
-                match: /onReceiveErrorHints:(\i),sourceQuestContent:(\i)\}\)\]/,
-                replace: "onReceiveErrorHints:$1,sourceQuestContent:$1}),$self.addChildren(arguments[0])]"
+                match: /children:(\i)\}\),(\i)&&/,
+                replace: "children:[$1,$self.addButton(arguments[0])]}),$2&&"
             }
         }
     ],
-    addChildren({ quest }: { quest: DiscordQuest; }) {
+    addButton({ quest }: { quest: DiscordQuest; }) {
         if (
             quest.userStatus &&
             quest.userStatus.enrolledAt &&
             !quest.userStatus.completedAt &&
             new Date(quest.config.expiresAt).getTime() > Date.now() &&
             !(!IS_DISCORD_DESKTOP && (quest.config.taskConfigV2.tasks.STREAM_ON_DESKTOP || quest.config.taskConfigV2.tasks.PLAY_ON_DESKTOP))
-        ) {
-            return <div className="vc-quest-button-container">
-                <Button className="vc-quest-button" onClick={() => completeQuest(quest)}>complelte quest wowizers im so good code</Button>
-            </div>;
-        }
+        ) return <Button onClick={() => completeQuest(quest)}>complete quest (wowzers)</Button>;
     },
     mobileQuestPatch(questId: number) {
         if (questId === questIdCheck) return;
         questIdCheck = questId;
         Vencord.Webpack.Common.RestAPI.post({
             url: `/quests/${questId}/enroll`,
-            body: {
-                location: 11
-            }
+            body: { location: 11 }
         });
     }
 });
