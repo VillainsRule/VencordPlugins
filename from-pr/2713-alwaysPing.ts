@@ -1,12 +1,11 @@
-// https://github.com/Vendicated/Vencord/pull/2713
-// adapted: inlined author
-// all credit goes to https://github.com/Z1xus
-
 /*
  * Vencord, a Discord client mod
  * Copyright (c) 2025 Vendicated and contributors
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
+
+// https://github.com/Vendicated/Vencord/pull/2713
+// adapted: inlined author
 
 import definePlugin from "@utils/types";
 import { FluxDispatcher, UserStore } from "@webpack/common";
