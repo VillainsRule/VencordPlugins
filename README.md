@@ -1,38 +1,35 @@
 <div align="center">
     <h1>VencordPlugins</h1>
-    <h3>QoL vencord plugins</h3>
+    <h3>a compilation of vencord plugins</h3>
 </div>
 
 <br>
 
 there are 3 cool things in here:
 1. [plugins from PRs](./from-pr/) - names are [pr number]-[plugin name].ts(x?)
-2. [removed plugins](./removed/) - as-is when removed from vencord
-3. [things i made](./userplugins/) - yeahhh fun stuff idk what to put here
+2. [removed plugins](./removed/) - plugins as-is when removed from vencord
+3. [things i made](./userplugins/) - the various userplugins i've created
 
 <br>
 
-also some cool plugins:
+also, here's some cool plugins from equicord:
 
-- [copyStatusUrls](https://github.com/sadan4/vc-copyStatusUrls) by sadan
-- [inRole](https://git.nin0.dev/userplugins/in-role) by nin0
-- [newPluginsManager](https://github.com/Sqaaakoi/vc-newPluginsManager) by sqaaakoi
-- [venfetch](https://git.nin0.dev/userplugins/venfetch) by nin0
-- [untitled](https://github.com/Kyuuhachi/VencordPlugins/tree/main/Untitled) by kyuuhachi
+- [bypassPinPrompt](https://github.com/Equicord/Equicord/tree/main/src/equicordplugins/bypassPinPrompt) by thororen
+- [cancelFriendRequest](https://github.com/Equicord/Equicord/tree/main/src/equicordplugins/pendingFriendRequest) by omaw
+- [copyStatusUrls](https://github.com/Equicord/Equicord/blob/main/src/equicordplugins/copyStatusUrls/index.ts) by sadan
+- [inRole](https://github.com/Equicord/Equicord/tree/main/src/equicordplugins/inRole) by nin0
+- [newPluginManager](https://github.com/Equicord/Equicord/tree/main/src/equicordplugins/newPluginsManager) by sqaaakoi
+- [saveFavoriteGIFs](https://github.com/Equicord/Equicord/tree/main/src/equicordplugins/saveFavoriteGIFs) by thororen
 
-to add the plugins, first follow the steps [here](https://docs.vencord.dev/installing/custom-plugins/) up to "add your plugins" from there, run this command **in the userplugins directory**:
+<br>
 
-mac/linux:
+to add the plugins in this repository, first follow the steps [here](https://docs.vencord.dev/installing/custom-plugins/) up to "add your plugins" from there, run this command **in the userplugins directory**:
 
 ```sh
 curl -L https://github.com/VillainsRule/VencordPlugins/archive/refs/heads/main.zip -o - | bsdtar -xf - --strip-components=2 "VencordPlugins-main/userplugins"
 ```
 
-windows:
+(i don't know the windows one, i don't use windows)
 
-idk ask chatgpt
-
-enjoy!
-
-<br>
-<h5 align="center">made with 💖 by VillainsRule</h5>
+<br><br>
+<h5 align="center">made with ❤️</h5>
