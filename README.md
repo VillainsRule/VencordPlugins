@@ -19,6 +19,7 @@ also, here's some cool plugins from equicord:
 - [copyStatusUrls](https://github.com/Equicord/Equicord/blob/main/src/equicordplugins/copyStatusUrls/index.ts) by sadan
 - [inRole](https://github.com/Equicord/Equicord/tree/main/src/equicordplugins/inRole) by nin0
 - [newPluginManager](https://github.com/Equicord/Equicord/tree/main/src/equicordplugins/newPluginsManager) by sqaaakoi
+- [noModalAnimation](https://github.com/AutumnVN/userplugins/blob/main/noModalAnimation.ts) by AutumnVN
 - [saveFavoriteGIFs](https://github.com/Equicord/Equicord/tree/main/src/equicordplugins/saveFavoriteGIFs) by thororen
 
 <br>
